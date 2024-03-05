@@ -1,8 +1,13 @@
 const express = require("express");
+const axios = require("axios")
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
 const public_users = express.Router();
+
+const getAllBooks = () => {
+  return books;
+};
 
 public_users.post("/register", (req, res) => {
   const username = req.body.username;
@@ -19,15 +24,22 @@ public_users.post("/register", (req, res) => {
 });
 
 // Get the book list available in the shop
-public_users.get("/", function (req, res) {
+public_users.get("/", async (req, res) => {
+  try {
+    const allBooks = await getAllBooks();
+    return res.status(200).send(JSON.stringify(allBooks, null, 4));
+  } catch (e) {
+    res.status(500).send(e)
+  }
   return res.send(JSON.stringify({ books }, null, 4));
 });
 
 // Get book details based on ISBN
-public_users.get("/isbn/:isbn", function (req, res) {
-  const isbn = req.params.isbn;
-  if (books[isbn]) {
-    return res.send(books[isbn]);
+public_users.get("/isbn/:isbn", async (req, res) => {
+  const isbn = parseInt(req.params.isbn);
+  const book = await books[isbn]
+  if (book) {
+    return res.send(book);
   }
   return res.status(404).json({ message: "isbn not found" });
 });
