@@ -45,6 +45,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
   res.status(200).json({message: "Book review Updated"})
 });
 
+// Delete a Book Review
 regd_users.delete("/auth/review/:isbn", (req,res) => {
   const user = req.session.authorization.username;
   const isbn = req.params.isbn;
