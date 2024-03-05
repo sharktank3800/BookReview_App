@@ -55,7 +55,7 @@ regd_users.delete("/auth/review/:isbn", (req,res) => {
   if(!books[isbn].reviews[user]){
     res.status(400).json({message: `${user} Hasn't Submitted a review for this book.`})
   }
-  delete books[isbn].review[user];
+  delete books[isbn].reviews[user];
   res.status(200).json({message: "Book review deleted."})
 })
 
