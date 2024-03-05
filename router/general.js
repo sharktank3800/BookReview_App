@@ -45,32 +45,26 @@ public_users.get("/isbn/:isbn", async (req, res) => {
 });
 
 // Get book details based on author
-public_users.get("/author/:author", function (req, res) {
-  const author = req.params.author;
-  const booksKeys = Object.keys(books);
-
-  for (let i = 0; i < booksKeys.length; i++) {
-    const bookId = booksKeys[i];
-    const book = books[bookId];
-
-    if (book.author === author) {
-      return res.send(book);
-    }
+public_users.get("/author/:author", async (req, res) => {
+  const authorBook = Object.values(await books).filter(
+    (book) => book.author.toLowerCase() === req.params.author.toLowerCase()
+  );
+  if(authorBook.length > 0){
+    return res.status(200).json(authorBook);
   }
-
-  return res.status(404).send("Book not found for the author");
+  return res.status(404).json({message: "No books by that author."})
 });
 
 // Get all books based on title
-public_users.get("/title/:title", function (req, res) {
-  const title = req.params.title;
-  const titleBooks = Object.values(books).filter(book => book.title === title);
+public_users.get("/title/:title", async (req, res) => {
+  const title = Object.values(await books).filter(
+    (book) => book.title.toLowerCase() === req.params.title.toLowerCase()
+  )[0];
 
-  if (titleBooks.length > 0) {
-    return res.send(titleBooks)
-  }
-
-  return res.status(404).json({message: "No books found with the title"})
+  if(title){
+    return res.status(200).json(title);
+  };
+  return res.status(404).json({message: "Title not found."})
 });
 
 //  Get book review
